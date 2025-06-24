@@ -7,50 +7,33 @@
   <style>
     /* Reset & Box Sizing */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow-x: hidden; font-family: 'Helvetica Neue', Arial, sans-serif; }
+    html, body { height: 100%; overflow-x: hidden; font-family: Georgia, 'Times New Roman', Times, serif; }
 
     /* Common Section Styling */
     .section { height: 100vh; display: flex; justify-content: center; align-items: center; }
 
     /* Hero Text */
-    .hero { font-size: clamp(3rem, 20vw, 10rem); font-weight: 900; text-transform: uppercase; text-align: center; }
+    .hero {
+      font-size: clamp(1rem, 6.67vw, 3.33rem);
+      font-weight: 400;
+      text-transform: none;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
     #main-hero { position: sticky; top: 50%; transform: translateY(-50%); }
 
-    /* Navigation */
-    .nav { position: fixed; top: 0; width: 100%; padding: 1rem; display: flex; justify-content: flex-end; z-index: 10; }
-    .nav a { margin-left: 2rem; font-weight: 600; text-decoration: none; color: #000; text-transform: uppercase; }
-
-    /* Backgrounds */
-    .bg-white { background-color: #fff; }
-    .bg-gray { background-color: #f9f9f9; }
+    /* Responsive Adjustment for Smaller Screens */
+    @media (max-width: 768px) {
+      .hero {
+        font-size: clamp(0.8rem, 10vw, 2rem);
+      }
+    }
   </style>
 </head>
 <body>
-  <!-- Navigation -->
-  <nav class="nav">
-    <a href="#about">About</a>
-    <a href="#services">Services</a>
-    <a href="#contact">Contact</a>
-  </nav>
-
   <!-- Hero Section -->
-  <section class="section bg-white">
+  <section class="section">
     <div id="main-hero" class="hero">Foundation Management Partners</div>
-  </section>
-
-  <!-- About Section -->
-  <section id="about" class="section bg-gray">
-    <div class="hero" style="font-size: clamp(2rem, 10vw, 5rem); font-weight: 400; text-transform: none;">About Us</div>
-  </section>
-
-  <!-- Services Section -->
-  <section id="services" class="section bg-white">
-    <div class="hero" style="font-size: clamp(2rem, 10vw, 5rem); font-weight: 400; text-transform: none;">Services</div>
-  </section>
-
-  <!-- Contact Section -->
-  <section id="contact" class="section bg-gray">
-    <div class="hero" style="font-size: clamp(2rem, 10vw, 5rem); font-weight: 400; text-transform: none;">Contact</div>
   </section>
 
   <!-- Scroll Fade Effect -->
