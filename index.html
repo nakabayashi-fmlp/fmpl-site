@@ -8,10 +8,10 @@
     /* Reset & Box Sizing */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow-x: hidden; font-family: Georgia, 'Times New Roman', Times, serif; }
-
+    
     /* Common Section Styling */
     .section { height: 100vh; display: flex; justify-content: center; align-items: center; }
-
+    
     /* Hero Text */
     .hero {
       font-size: clamp(1rem, 6.67vw, 3.33rem);
@@ -19,13 +19,57 @@
       text-transform: none;
       text-align: center;
       letter-spacing: 0.05em;
+      min-height: 1.2em; /* タイピング前のスペースを確保 */
     }
-    #main-hero { position: sticky; top: 50%; transform: translateY(-50%); }
-
+    
+    #main-hero { 
+      position: sticky; 
+      top: 50%; 
+      transform: translateY(-50%); 
+    }
+    
+    /* タイピングアニメーション用スタイル */
+    .cursor {
+      display: inline-block;
+      background-color: currentColor;
+      width: 2px;
+      height: 1em;
+      animation: blink 1s infinite;
+      margin-left: 0.1em;
+      vertical-align: baseline;
+    }
+    
+    @keyframes blink {
+      0%, 50% { opacity: 1; }
+      51%, 100% { opacity: 0; }
+    }
+    
+    .fade-in-char {
+      opacity: 0;
+      animation: fadeInChar 0.15s ease-in forwards;
+    }
+    
+    @keyframes fadeInChar {
+      to { opacity: 1; }
+    }
+    
+    /* 初期状態で非表示 */
+    .hero-content {
+      opacity: 0;
+    }
+    
+    .hero-content.show {
+      opacity: 1;
+      transition: opacity 0.5s ease-in;
+    }
+    
     /* Responsive Adjustment for Smaller Screens */
     @media (max-width: 768px) {
       .hero {
         font-size: clamp(0.8rem, 10vw, 2rem);
+      }
+      .cursor {
+        width: 1.5px;
       }
     }
   </style>
@@ -33,17 +77,74 @@
 <body>
   <!-- Hero Section -->
   <section class="section">
-    <div id="main-hero" class="hero">Foundation Management Partners</div>
+    <div id="main-hero" class="hero">
+      <span id="hero-content" class="hero-content"></span>
+    </div>
   </section>
-
-  <!-- Scroll Fade Effect -->
+  
+  <!-- Scripts -->
   <script>
+    // タイピングアニメーション関数
+    function createTypingEffect(elementId, text, speed = 120, preCursorBlinks = 2) {
+      const element = document.getElementById(elementId);
+      let charIndex = 0;
+      
+      // コンテナを表示
+      element.classList.add('show');
+      
+      // カーソーを追加
+      const cursor = document.createElement('span');
+      cursor.className = 'cursor';
+      element.appendChild(cursor);
+      
+      function typeNextChar() {
+        if (charIndex < text.length) {
+          // 新しい文字要素を作成
+          const charSpan = document.createElement('span');
+          charSpan.textContent = text.charAt(charIndex);
+          charSpan.className = 'fade-in-char';
+          
+          // カーソーの前に文字を挿入
+          element.insertBefore(charSpan, cursor);
+          
+          charIndex++;
+          
+          // 次の文字までの遅延（自然なタイピング感のためランダム要素を追加）
+          let delay = speed;
+          
+          // 特定の文字の後に長めの休止を追加
+          const prevChar = text.charAt(charIndex - 1);
+          if (prevChar === ' ') delay *= 0.7; // スペースの後は少し短く
+          if (prevChar === ',') delay *= 2.5; // カンマの後は長く
+          if (prevChar === '.') delay *= 3; // ピリオドの後はさらに長く
+          
+          // ランダムな遅延を追加（-30から+30ms）
+          delay += (Math.random() * 60 - 30);
+          
+          setTimeout(typeNextChar, delay);
+        } else {
+          // タイピング完了後、カーソーを3秒後に非表示
+          setTimeout(() => {
+            cursor.style.animation = 'none';
+            cursor.style.opacity = '0';
+          }, 3000);
+        }
+      }
+      
+      // カーソーが指定回数点滅してからタイピング開始
+      // 1回の点滅は1秒なので、2回点滅は2秒
+      const blinkDelay = preCursorBlinks * 1000;
+      setTimeout(typeNextChar, blinkDelay);
+    }
+    
+    // スクロールフェード効果（既存の機能を維持）
     window.addEventListener('scroll', () => {
       const hero = document.getElementById('main-hero');
       const fadeStart = 0;
       const fadeUntil = window.innerHeight / 2;
       const offset = window.pageYOffset;
       let opacity = 1;
+      
       if (offset <= fadeStart) {
         opacity = 1;
       } else if (offset <= fadeUntil) {
@@ -51,7 +152,16 @@
       } else {
         opacity = 0;
       }
+      
       hero.style.opacity = opacity;
+    });
+    
+    // ページ読み込み完了後にタイピングアニメーション開始
+    document.addEventListener('DOMContentLoaded', function() {
+      // 800ms遅延してからタイピング開始（カーソーが2回点滅してから文字入力開始）
+      setTimeout(() => {
+        createTypingEffect('hero-content', 'Foundation Management Partners', 100, 2);
+      }, 800);
     });
   </script>
 </body>
