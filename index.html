@@ -45,12 +45,7 @@
     }
     
     .fade-in-char {
-      opacity: 0;
-      animation: fadeInChar 0.15s ease-in forwards;
-    }
-    
-    @keyframes fadeInChar {
-      to { opacity: 1; }
+      opacity: 1;
     }
     
     /* 初期状態で非表示 */
@@ -85,7 +80,7 @@
   <!-- Scripts -->
   <script>
     // タイピングアニメーション関数
-    function createTypingEffect(elementId, text, speed = 120, preCursorBlinks = 2) {
+    function createTypingEffect(elementId, text, speed = 200, preCursorBlinks = 2) {
       const element = document.getElementById(elementId);
       let charIndex = 0;
       
@@ -109,17 +104,25 @@
           
           charIndex++;
           
-          // 次の文字までの遅延（自然なタイピング感のためランダム要素を追加）
-          let delay = speed;
+          // 次の文字までの遅延を計算
+          let delay = speed; // デフォルトは200ms（単語内）
           
-          // 特定の文字の後に長めの休止を追加
-          const prevChar = text.charAt(charIndex - 1);
-          if (prevChar === ' ') delay *= 0.7; // スペースの後は少し短く
-          if (prevChar === ',') delay *= 2.5; // カンマの後は長く
-          if (prevChar === '.') delay *= 3; // ピリオドの後はさらに長く
+          // 現在の文字と前の文字の後の遅延を設定
+          const currentChar = text.charAt(charIndex - 1);
+          const prevChar = charIndex > 1 ? text.charAt(charIndex - 2) : '';
           
-          // ランダムな遅延を追加（-30から+30ms）
-          delay += (Math.random() * 60 - 30);
+          if (currentChar === ' ' || prevChar === ' ') {
+            delay = 320; // スペース文字自体も、スペース後も320ms
+          } else if (currentChar === ',') {
+            delay *= 2.5; // カンマの後は長く
+          } else if (prevChar === '.') {
+            delay *= 3; // ピリオドの後はさらに長く
+          }
+          
+          // 単語内の文字にはランダムな遅延を追加（-20から+20ms）
+          if (currentChar !== ' ' && prevChar !== ' ') {
+            delay += (Math.random() * 40 - 20);
+          }
           
           setTimeout(typeNextChar, delay);
         } else {
@@ -160,7 +163,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       // 800ms遅延してからタイピング開始（カーソーが2回点滅してから文字入力開始）
       setTimeout(() => {
-        createTypingEffect('hero-content', 'Foundation Management Partners', 100, 2);
+        createTypingEffect('hero-content', 'Foundation Management Partners', 200, 2);
       }, 800);
     });
   </script>
